@@ -47,8 +47,10 @@ async def read_root(request: Request):
     """
     Serves the main HTML page.
     """
-    return templates.TemplateResponse("index.html", {"request": request})
-
+    return templates.TemplateResponse(
+    request=request,
+    name="index.html"
+)
 
 @app.post("/api/contact", status_code=status.HTTP_200_OK)
 async def submit_contact_form(contact: ContactForm):
