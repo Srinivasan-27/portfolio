@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Srinivasan G - Personal Portfolio</title>
+  <link rel="shortcut icon" href="/static/images/logo.ico" type="image/x-icon">
+  <link rel="stylesheet" href="/static/css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  
+
+  <style>
+    .skills-categories {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 14px;
+    }
+    .skill-category {
+      min-width: 0;
+      padding: 14px 16px;
+      border: 1px solid var(--jet, #383838);
+      border-radius: 12px;
+      background: var(--eerie-black-1, #202020);
+    }
+    .skill-category-title {
+      margin: 0 0 12px;
+      font-size: 15px;
+      line-height: 1.4;
+    }
+    .skill-category .skills-list {
+      display: grid;
+      gap: 10px;
+      margin: 0;
+      padding: 0;
+    }
+    .skill-category .skills-item { margin: 0; }
+    .skill-category .title-wrapper { margin-bottom: 5px; }
+    .skill-category .title-wrapper .h5 { font-size: 12px; }
+    .skill-category .title-wrapper data { font-size: 11px; }
+    .skill-category .skill-progress-bg { height: 5px; }
+    @media (max-width: 650px) {
+      .skills-categories { grid-template-columns: 1fr; gap: 10px; }
+      .skill-category { padding: 12px 14px; }
+    }
+  </style>
+
+
+<style>
+/* Compact portfolio project cards */
+.project-list { align-items: start; }
+.project-card-content.compact-project-card { min-width: 0; }
+.compact-project-card .project-image-link { display: block; }
+.compact-project-card .project-img { overflow: hidden; aspect-ratio: 16 / 10; }
+.compact-project-card .project-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.compact-project-card .project-title { margin: 10px 0 3px; overflow-wrap: anywhere; }
+.compact-project-card .project-category { margin: 0; }
+.project-card-actions { display: flex; justify-content: flex-start; margin-top: 10px; }
+.project-details-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+  padding: 8px 12px; border: 1px solid var(--jet, #383838); border-radius: 10px;
+  background: var(--eerie-black-1, #202020); color: var(--orange-yellow-crayola, #ffdb70);
+  font: inherit; font-size: 12px; cursor: pointer; transition: background .2s, transform .2s;
+}
+.project-details-btn:hover { background: var(--onyx, #333); transform: translateY(-1px); }
+.project-details-btn ion-icon { font-size: 17px; }
+.project-description, .project-technologies, .project-links { display: none !important; }
+
+/* Details dialog */
+.project-modal[hidden] { display: none !important; }
+.project-modal { position: fixed; inset: 0; z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 20px; }
+.project-modal-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,.78); backdrop-filter: blur(4px); }
+.project-modal-panel {
+  position: relative; z-index: 1; width: min(520px, 100%); max-height: min(82vh, 720px); overflow: auto;
+  padding: 24px; border: 1px solid #444; border-radius: 18px;
+  background: var(--eerie-black-2, #202020); color: var(--white-2, #fafafa);
+  box-shadow: 0 18px 60px rgba(0,0,0,.45);
+}
+.project-modal-close { position: absolute; top: 12px; right: 12px; border: 0; background: transparent; color: inherit; font-size: 26px; cursor: pointer; }
+.project-modal-panel h3 { padding-right: 30px; margin: 0 0 12px; font-size: 22px; }
+.project-modal-panel p { line-height: 1.65; overflow-wrap: anywhere; }
+.project-modal-tech { color: var(--light-gray, #c5c5c5); font-size: 13px; }
+.project-modal-links { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+.project-modal-links a { display: inline-flex; align-items: center; gap: 7px; padding: 9px 13px; border-radius: 9px; background: #343434; color: #ffdb70; text-decoration: none; font-size: 13px; }
+.project-modal-links a:hover { background: #444; }
+body.project-modal-open { overflow: hidden; }
+
+/* Prevent multi-role designations from being clipped in the profile sidebar */
+.sidebar .info-content .title,
+.sidebar .info-content p.title,
+.sidebar .name + .title {
+  white-space: normal !important; overflow: visible !important; text-overflow: clip !important;
+  overflow-wrap: anywhere; word-break: normal; line-height: 1.55; height: auto; max-width: 100%;
+}
+.sidebar .info-content { min-width: 0; }
+@media (max-width: 580px) {
+  .project-modal { padding: 12px; }
+  .project-modal-panel { padding: 20px 16px; }
+}
+</style>
+
+<style>
+
+/* Definitive fix: let the profile designation wrap within the sidebar width */
+.sidebar .sidebar-info {
+  width: 100%;
+  min-width: 0;
+}
+
+.sidebar .info-content {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  text-align: center;
+}
+
+.sidebar .info-content .title {
+  display: block !important;
+  width: fit-content !important;
+  max-width: 100% !important;
+  margin: 0 auto !important;
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+  overflow-wrap: anywhere !important;
+  word-break: normal !important;
+  height: auto !important;
+  max-height: none !important;
+  line-height: 1.55 !important;
+  text-align: center !important;
+  box-sizing: border-box !important;
+}
+
+@media (min-width: 1250px) {
+  .sidebar .info-content {
+    width: 100% !important;
+  }
+
+  .sidebar .info-content .title {
+    width: fit-content !important;
+    max-width: 100% !important;
+    margin-inline: auto !important;
+  }
+}
+
+</style>
+</head>
+<body>
+  <main>
+    <aside class="sidebar" data-sidebar>
+      <div class="sidebar-info">
+        <figure class="avatar-box">
+          <img src="/static/images/profile.jpeg" alt="Srinivasan G" width="80" id="avatarImage">
+        </figure>
+        <div class="info-content">
+          <h1 class="name" title="{{ profile.get('name', 'Srinivasan G') }}">{{ profile.get('name', 'Srinivasan G') }}</h1>
+          <p class="title">{{ profile.get('headline', 'Full Stack Developer') }}</p>
+        </div>
+        <button class="info_more-btn" data-sidebar-btn>
+          <span>Show Contacts</span>
+          <ion-icon name="chevron-down"></ion-icon>
+        </button>
+      </div>
+      <div class="sidebar-info_more">
+        <div class="separator"></div>
+        <ul class="contacts-list">
+          <li class="contact-item">
+            <div class="icon-box">
+              <ion-icon name="mail-outline"></ion-icon>
+            </div>
+            <div class="contact-info">
+              <p class="contact-title">Email</p>
+              <a href="mailto:srinigopalakrishnan2004@gmail.com" class="contact-link">srinigopalakrishnan2004@gmail.com</a>
+            </div>
+          </li>
+          <li class="contact-item">
+            <div class="icon-box">
+              <ion-icon name="phone-portrait-outline"></ion-icon>
+            </div>
+            <div class="contact-info">
+              <p class="contact-title">Phone</p>
+              <a href="tel:+918939705717" class="contact-link">+91 8939705717</a>
+            </div>
+          </li>
+          <li class="contact-item">
+            <div class="icon-box">
+              <ion-icon name="calendar-outline"></ion-icon>
+            </div>
+            <div class="contact-info">
+              <p class="contact-title">Birthday</p>
+              <time datetime="2004-10-27">Oct 27, 2004</time>
+            </div>
+          </li>
+          <li class="contact-item">
+            <div class="icon-box">
+              <ion-icon name="location-outline"></ion-icon>
+            </div>
+            <div class="contact-info">
+              <p class="contact-title">Location</p>
+              <address>Chennai, TamilNadu, INDIA</address>
+            </div>
+          </li>
+        </ul>
+        <div class="separator"></div>
+        <ul class="social-list">
+          <li class="social-item">
+            <a href="https://www.facebook.com/share/18zmdj2nCo/" class="social-link" target="_blank">
+              <ion-icon name="logo-facebook"></ion-icon>
+            </a>
+          </li>
+          <li class="social-item">
+            <a href="https://twitter.com" class="social-link" target="_blank">
+              <ion-icon name="logo-twitter"></ion-icon>
+            </a>
+          </li>
+          <li class="social-item">
+            <a href="https://www.instagram.com/itz.me.srini?igsh=YnVjMXFxeWt6cjky" class="social-link" target="_blank">
+              <ion-icon name="logo-instagram"></ion-icon>
+            </a>
+          </li>
+          <li class="social-item">
+            <a href="https://github.com/Srinivasan-27" class="social-link" target="_blank">
+              <ion-icon name="logo-github"></ion-icon>
+            </a>
+          </li>
+          <li class="social-item">
+            <a href="https://www.linkedin.com/in/g-srinivasan-745273274" class="social-link" target="_blank">
+              <ion-icon name="logo-linkedin"></ion-icon>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </aside>
+
+    <div class="main-content">
+      <nav class="navbar">
+        <ul class="navbar-list">
+          <li class="navbar-item">
+            <button class="navbar-link active" data-nav-link>About</button>
+          </li>
+          <li class="navbar-item">
+            <button class="navbar-link" data-nav-link>Resume</button>
+          </li>
+          <li class="navbar-item">
+            <button class="navbar-link" data-nav-link>Portfolio</button>
+          </li>
+          <li class="navbar-item">
+            <button class="navbar-link" data-nav-link>Contact</button>
+          </li>
+        </ul>
+      </nav>
+
+      <article class="about active" data-page="about">
+        <header>
+          <h2 class="h2 article-title">About me</h2>
+        </header>
+        <section class="about-text">
+          {% set profile_data = profile or {} %}
+          {% set about_text = profile_data.get('about', '') %}
+          {% set summary_text = profile_data.get('summary', '') %}
+          {% if not about_text or about_text|lower in ['about paragraph', 'about me'] %}
+            {% set about_text = "I'm a motivated B.Tech Information Technology graduate from Chennai, India, specializing in full-stack web development. Proficient in building and deploying applications using Python, Flask, and modern frontend technologies." %}
+          {% endif %}
+          {% if not summary_text or summary_text|lower in ['second paragraph', 'summary'] %}
+            {% set summary_text = "Eager to apply a strong foundation in problem-solving and practical coding skills to contribute to a dynamic engineering team." %}
+          {% endif %}
+          <p>{{ about_text }}</p>
+          <p>{{ summary_text }}</p>
+        </section>
+        <section class="service">
+          <h3 class="h3 service-title">What I'm doing</h3>
+          <ul class="service-list">
+            <li class="service-item">
+              <div class="service-icon-box">
+                <img src="/static/images/icon-design.svg" alt="design icon" width="40">
+              </div>
+              <div class="service-content-box">
+                <h4 class="h4 service-item-title">Web design</h4>
+                <p class="service-item-text">Modern and high-quality designs at a professional level.</p>
+              </div>
+            </li>
+            <li class="service-item">
+              <div class="service-icon-box">
+                <img src="/static/images/icon-dev.svg" alt="Web development icon" width="40">
+              </div>
+              <div class="service-content-box">
+                <h4 class="h4 service-item-title">Web development</h4>
+                <p class="service-item-text">High-quality development of websites at a professional level.</p>
+              </div>
+            </li>
+            <li class="service-item">
+              <div class="service-icon-box">
+                <img src="/static/images/icon-app.svg" alt="mobile app icon" width="40">
+              </div>
+              <div class="service-content-box">
+                <h4 class="h4 service-item-title">Mobile apps</h4>
+                <p class="service-item-text">Professional development of applications for iOS and Android.</p>
+              </div>
+            </li>
+          </ul>
+        </section>
+      </article>
+
+      <article class="resume" data-page="resume">
+        <header>
+          <h2 class="h2 article-title">Resume</h2>
+        </header>
+
+
+        
+        <section class="timeline">
+          <div class="title-wrapper">
+            <div class="icon-box">
+              <ion-icon name="book-outline"></ion-icon>
+            </div>
+            <h3 class="h3">Education</h3>
+          </div>
+          <ol class="timeline-list">
+            {% for item in portfolio.get('education', []) %}
+              <li class="timeline-item">
+                <h4 class="h4 timeline-item-title">{{ item.title }}</h4>
+                <span>{{ item.data.get('dates', '') }}</span>
+                <p class="timeline-text">{{ item.data.get('description', '') }}</p>
+              </li>
+            {% endfor %}
+          </ol>
+        </section>
+        <section class="timeline">
+          <div class="title-wrapper">
+            <div class="icon-box">
+              <ion-icon name="briefcase-outline"></ion-icon>
+            </div>
+            <h3 class="h3">Experience</h3>
+          </div>
+          <ol class="timeline-list">
+            {% for item in portfolio.get('experience', []) %}
+              <li class="timeline-item">
+                <h4 class="h4 timeline-item-title">{{ item.title }}</h4>
+                <span><b>{{ item.data.get('company', '') }}</b>{% if item.data.get('dates') %} | {{ item.data.get('dates') }}{% endif %}</span>
+                <p class="timeline-text">{{ item.data.get('description', '') }}</p>
+              </li>
+            {% endfor %}
+          </ol>
+        </section>
+        <section class="timeline">
+          <div class="title-wrapper">
+            <div class="icon-box">
+              <ion-icon name="ribbon-outline"></ion-icon>
+            </div>
+            <h3 class="h3">Certifications</h3>
+          </div>
+          <ol class="timeline-list">
+            {% for item in portfolio.get('certification', []) %}
+              <li class="timeline-item">
+                <h4 class="h4 timeline-item-title">{{ item.title }}</h4>
+                {% if item.data.get('issuer') or item.data.get('date') %}
+                  <span>{{ item.data.get('issuer', '') }}{% if item.data.get('issuer') and item.data.get('date') %} | {% endif %}{{ item.data.get('date', '') }}</span>
+                {% endif %}
+                {% if item.data.get('description') %}
+                  <p class="timeline-text">{{ item.data.get('description') }}</p>
+                {% endif %}
+                {% if item.data.get('credential_url') %}
+                  <p class="timeline-text"><a href="{{ item.data.get('credential_url') }}" target="_blank" rel="noopener noreferrer">View credential</a></p>
+                {% endif %}
+              </li>
+            {% endfor %}
+          </ol>
+        </section>
+      </article>
+
+      <article class="portfolio" data-page="portfolio">
+        <header>
+          <h2 class="h2 article-title">Portfolio</h2>
+        </header>
+        <section class="skill">
+          <h3 class="h3 skills-title">My Skills</h3>
+          {% set skill_items = portfolio.get('skill', []) %}
+          {% set skill_categories = [
+            {'name': 'Programming', 'aliases': ['programming', 'programming languages', 'languages'], 'items': ['python', 'java', 'c', 'javascript', 'typescript']},
+            {'name': 'Backend & APIs', 'aliases': ['backend', 'backend & apis', 'backend and apis', 'backend development', 'apis'], 'items': ['flask', 'fastapi', 'rest apis', 'jinja2']},
+            {'name': 'Frontend', 'aliases': ['frontend', 'frontend development', 'web development', 'web design'], 'items': ['html5', 'html', 'css3', 'css', 'react', 'react router', 'tailwind css', 'html & css']},
+            {'name': 'Databases', 'aliases': ['database', 'databases', 'database management'], 'items': ['mongodb atlas', 'mongodb', 'postgresql', 'supabase', 'mysql', 'sql']},
+            {'name': 'Data & Machine Learning', 'aliases': ['data', 'data science', 'python libraries & machine learning', 'machine learning', 'ai/ml'], 'items': ['pandas', 'numpy', 'scikit-learn']},
+            {'name': 'Cloud & Deployment', 'aliases': ['cloud', 'cloud & deployment', 'cloud and deployment', 'deployment', 'devops'], 'items': ['aws s3', 'aws cloudfront', 'aws ec2', 'aws rds', 'aws', 'render', 'vercel']},
+            {'name': 'Developer Tools', 'aliases': ['tools', 'development tools', 'developer tools', 'version control'], 'items': ['git', 'github', 'git and github', 'visual studio code', 'vs code']}
+          ] %}
+          <div class="skills-categories">
+            {% for category in skill_categories %}
+              {% set category_ns = namespace(items=[]) %}
+              {% for item in skill_items %}
+                {% set title_lower = item.title|lower|trim %}
+                {% set item_category = item.data.get('category', '')|lower|trim %}
+                {% if item_category in category.aliases or item_category == category.name|lower or (not item_category and title_lower in category.items) %}
+                  {% set _ = category_ns.items.append(item) %}
+                {% endif %}
+              {% endfor %}
+              {% if category_ns.items %}
+                <section class="skill-category">
+                  <h4 class="h4 skill-category-title">{{ category.name }}</h4>
+                  <ul class="skills-list">
+                    {% for item in category_ns.items %}
+                      <li class="skills-item">
+                        <div class="title-wrapper">
+                          <h5 class="h5">{{ item.title }}</h5>
+                          <data value="{{ item.data.get('level', 0) }}">{{ item.data.get('level', 0) }}%</data>
+                        </div>
+                        <div class="skill-progress-bg">
+                          <div class="skill-progress-fill" data-skill-level="{{ item.data.get('level', 0) }}"></div>
+                        </div>
+                      </li>
+                    {% endfor %}
+                  </ul>
+                </section>
+              {% endif %}
+            {% endfor %}
+            {% set other_ns = namespace(items=[]) %}
+            {% for item in skill_items %}
+              {% set title_lower = item.title|lower|trim %}
+              {% set item_category = item.data.get('category', '')|lower|trim %}
+              {% set matched = namespace(value=false) %}
+              {% for category in skill_categories %}
+                {% if item_category in category.aliases or item_category == category.name|lower or (not item_category and title_lower in category.items) %}
+                  {% set matched.value = true %}
+                {% endif %}
+              {% endfor %}
+              {% if not matched.value %}
+                {% set _ = other_ns.items.append(item) %}
+              {% endif %}
+            {% endfor %}
+            {% if other_ns.items %}
+              <section class="skill-category">
+                <h4 class="h4 skill-category-title">Other Skills</h4>
+                <ul class="skills-list">
+                  {% for item in other_ns.items %}
+                    <li class="skills-item">
+                      <div class="title-wrapper">
+                        <h5 class="h5">{{ item.title }}</h5>
+                        <data value="{{ item.data.get('level', 0) }}">{{ item.data.get('level', 0) }}%</data>
+                      </div>
+                      <div class="skill-progress-bg">
+                        <div class="skill-progress-fill" data-skill-level="{{ item.data.get('level', 0) }}"></div>
+                      </div>
+                    </li>
+                  {% endfor %}
+                </ul>
+              </section>
+            {% endif %}
+          </div>
+        </section>
+
+        <section class="projects">
+          <ul class="filter-list">
+            <li class="filter-item">
+              <button class="active" data-filter-btn>All</button>
+            </li>
+            <li class="filter-item">
+              <button data-filter-btn>Web design</button>
+            </li>
+            <li class="filter-item">
+              <button data-filter-btn>Web development</button>
+            </li>
+            <li class="filter-item">
+              <button data-filter-btn>Mobile apps</button>
+            </li>
+          </ul>
+          <div class="filter-select-box">
+            <button class="filter-select" data-select>
+              <div class="select-value" data-select-value>Select category</div>
+              <div class="select-icon">
+                <ion-icon name="chevron-down"></ion-icon>
+              </div>
+            </button>
+            <ul class="select-list">
+              <li class="select-item">
+                <button data-select-item>All</button>
+              </li>
+              <li class="select-item">
+                <button data-select-item>Web design</button>
+              </li>
+              <li class="select-item">
+                <button data-select-item>Web development</button>
+              </li>
+              <li class="select-item">
+                <button data-select-item>Mobile apps</button>
+              </li>
+            </ul>
+          </div>
+          <ul class="project-list">
+            {% for item in portfolio.get('project', []) %}
+              {% set project_url = item.data.get('url', '') %}
+              {% set github_url = item.data.get('github_url', '') %}
+              {% set project_image = item.data.get('image', '') %}
+              <li class="project-item active"
+                  data-filter-item
+                  data-category="{{ (item.data.get('category') or 'web development')|lower }}">
+                <div class="project-card-content compact-project-card">
+                  {% if project_url %}
+                    <a class="project-image-link" href="{{ project_url }}" target="_blank" rel="noopener noreferrer"
+                       aria-label="Open {{ item.title }} live website">
+                  {% else %}
+                    <a class="project-image-link" href="{{ project_image or '#' }}" {% if project_image %}target="_blank" rel="noopener noreferrer"{% endif %}
+                       aria-label="Open {{ item.title }} project image">
+                  {% endif %}
+                      <figure class="project-img">
+                        {% if project_image %}
+                          <img src="{{ project_image }}" alt="{{ item.title }}" loading="lazy"
+                               onerror="this.onerror=null;this.src='/static/images/90sgamehub.png';">
+                        {% else %}
+                          <img src="/static/images/90sgamehub.png" alt="{{ item.title }}" loading="lazy">
+                        {% endif %}
+                      </figure>
+                    </a>
+                  <h3 class="project-title">{{ item.title }}</h3>
+                  <p class="project-category">{{ item.data.get('category', 'Web development') }}</p>
+                  <div class="project-card-actions">
+                    <button type="button" class="project-details-btn"
+                      data-project-details
+                      data-title="{{ item.title|e }}"
+                      data-description="{{ item.data.get('description', '')|e }}"
+                      data-technologies="{% if item.data.get('technologies') is string %}{{ item.data.get('technologies')|e }}{% elif item.data.get('technologies') %}{{ item.data.get('technologies')|join(' · ')|e }}{% endif %}"
+                      data-live-url="{{ project_url|e }}"
+                      data-github-url="{{ github_url|e }}"
+                      aria-label="View details for {{ item.title }}">
+                      <ion-icon name="eye-outline"></ion-icon>
+                      <span>View Details</span>
+                    </button>
+                  </div>
+                </div>
+              </li>
+            {% endfor %}
+          </ul>
+        </section>
+      </article>
+
+      <article class="contact" data-page="contact">
+        <header>
+          <h2 class="h2 article-title">Contact</h2>
+        </header>
+        <section class="mapbox" data-mapbox>
+          <figure>
+            <iframe
+              src="https://maps.google.com/maps?q=Near%20Baba%20Temple%2C%20TNHB%2C%20Ayapakkam%2C%20Chennai%20600077&t=&z=15&ie=UTF8&iwloc=&output=embed"
+              width="100%" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+          </figure>
+        </section>
+        <section class="contact-form">
+          <h3 class="h3 form-title">Contact Form</h3>
+          <form action="#" class="form" data-form id="contact-form">
+            <div class="input-wrapper">
+              <input type="text" name="fullname" class="form-input" placeholder="Full name" required data-form-input>
+              <input type="email" name="email" class="form-input" placeholder="Email address" required data-form-input>
+            </div>
+            <textarea name="message" class="form-input" placeholder="Your Message" required data-form-input></textarea>
+            <button class="form-btn" type="submit" data-form-btn>
+              <ion-icon name="paper-plane"></ion-icon>
+              <span>Send Message</span>
+            </button>
+          </form>
+        </section>
+      </article>
+    </div>
+  </main>
+
+  <div id="myModal" class="modal">
+    <span class="close">×</span>
+    <img class="modal-content" id="img01">
+  </div>
+
+  <script>
+    // Apply skill bar widths after Jinja has rendered the template.
+    document.querySelectorAll("[data-skill-level]").forEach((bar) => {
+      const level = Number(bar.dataset.skillLevel);
+      const safeLevel = Number.isFinite(level) ? Math.min(100, Math.max(0, level)) : 0;
+      bar.style.width = `${safeLevel}%`;
+    });
+  </script>
+  <script src="/static/js/script.js"></script>
+  <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+
+<div class="project-modal" id="project-details-modal" hidden aria-hidden="true">
+  <div class="project-modal-backdrop" data-modal-close></div>
+  <section class="project-modal-panel" role="dialog" aria-modal="true" aria-labelledby="project-modal-title">
+    <button type="button" class="project-modal-close" data-modal-close aria-label="Close project details">&times;</button>
+    <h3 id="project-modal-title"></h3>
+    <p id="project-modal-description"></p>
+    <p class="project-modal-tech" id="project-modal-technologies"></p>
+    <div class="project-modal-links" id="project-modal-links"></div>
+  </section>
+</div>
+<script>
+(function () {
+  const modal = document.getElementById('project-details-modal');
+  if (!modal) return;
+  const titleEl = document.getElementById('project-modal-title');
+  const descriptionEl = document.getElementById('project-modal-description');
+  const technologiesEl = document.getElementById('project-modal-technologies');
+  const linksEl = document.getElementById('project-modal-links');
+  let lastTrigger = null;
+
+  function addLink(label, url, iconName) {
+    if (!url || !(url.startsWith('https://') || url.startsWith('http://'))) return;
+    const link = document.createElement('a');
+    link.href = url;
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+    const icon = document.createElement('ion-icon');
+    icon.setAttribute('name', iconName);
+    link.appendChild(icon);
+    link.appendChild(document.createTextNode(label));
+    linksEl.appendChild(link);
+  }
+
+  function openModal(button) {
+    lastTrigger = button;
+    titleEl.textContent = button.dataset.title || 'Project details';
+    descriptionEl.textContent = button.dataset.description || 'No description has been added yet.';
+    technologiesEl.textContent = button.dataset.technologies || '';
+    technologiesEl.hidden = !technologiesEl.textContent.trim();
+    linksEl.replaceChildren();
+    addLink('Live Demo', button.dataset.liveUrl, 'open-outline');
+    addLink('GitHub Repository', button.dataset.githubUrl, 'logo-github');
+    modal.hidden = false;
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('project-modal-open');
+    modal.querySelector('.project-modal-close').focus();
+  }
+
+  function closeModal() {
+    modal.hidden = true;
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('project-modal-open');
+    if (lastTrigger) lastTrigger.focus();
+  }
+
+  document.addEventListener('click', function (event) {
+    const trigger = event.target.closest('[data-project-details]');
+    if (trigger) { openModal(trigger); return; }
+    if (event.target.closest('[data-modal-close]')) closeModal();
+  });
+  document.addEventListener('keydown', function (event) {
+    if (event.key === 'Escape' && !modal.hidden) closeModal();
+  });
+})();
+</script>
+
+</body>
+</html>

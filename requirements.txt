@@ -1,0 +1,11 @@
+fastapi
+uvicorn[standard]
+pymongo
+python-dotenv
+jinja2
+fastapi-mail
+supabase
+itsdangerous
+pwdlib[argon2]
+python-multipart
+email-validator

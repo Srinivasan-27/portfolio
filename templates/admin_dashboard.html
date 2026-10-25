@@ -1,0 +1,651 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Portfolio Admin | SGPortfolio CMS</title>
+
+    <link rel="stylesheet" href="/static/css/admin.css">
+</head>
+
+<body class="admin-body">
+    <div class="admin-shell">
+
+        <!-- Sidebar -->
+        <aside class="admin-sidebar">
+            <a class="brand" href="/admin">
+                SG <span>Portfolio CMS</span>
+            </a>
+
+            <nav aria-label="Admin navigation">
+                {% for k in allowed_kinds %}
+                    <a
+                        class="{% if kind == k %}selected{% endif %}"
+                        href="/admin?kind={{ k }}"
+                    >
+                        {{ k|replace('_', ' ')|title }}
+                        <span>{{ counts.get(k, 0) }}</span>
+                    </a>
+                {% endfor %}
+            </nav>
+
+            <a class="back-link" href="/">
+                ← View portfolio
+            </a>
+        </aside>
+
+        <!-- Main dashboard -->
+        <main class="admin-main">
+
+            <!-- Header -->
+            <header class="admin-header">
+                <div>
+                    <p class="eyebrow">CONTENT MANAGEMENT</p>
+
+                    <h1>
+                        {{ kind|replace('_', ' ')|title }}
+                    </h1>
+
+                    <p class="muted">
+                        Manage your portfolio content from one place.
+                    </p>
+                </div>
+
+                <form method="post" action="/admin/logout">
+                    <input
+                        type="hidden"
+                        name="csrf_token"
+                        value="{{ csrf_token }}"
+                    >
+
+                    <button class="secondary" type="submit">
+                        Log out
+                    </button>
+                </form>
+            </header>
+
+            <!-- Dashboard overview -->
+            <section class="dashboard-overview">
+                <div class="overview-heading">
+                    <div>
+                        <p class="eyebrow">
+                            YOUR PORTFOLIO AT A GLANCE
+                        </p>
+
+                        <h2>Dashboard Overview</h2>
+                    </div>
+
+                    <span class="overview-total">
+                        {{ counts.values() | sum }} entries
+                    </span>
+                </div>
+
+                <div class="overview-grid">
+                    {% for k in allowed_kinds %}
+                        <a
+                            class="overview-card {% if kind == k %}active{% endif %}"
+                            href="/admin?kind={{ k }}"
+                        >
+                            <span class="overview-label">
+                                {{ k|replace('_', ' ')|title }}
+                            </span>
+
+                            <strong>
+                                {{ counts.get(k, 0) }}
+                            </strong>
+
+                            <span class="overview-link">
+                                Manage entries →
+                            </span>
+                        </a>
+                    {% endfor %}
+                </div>
+            </section>
+
+            <!-- Feedback messages -->
+            {% if message %}
+                <div class="alert success" role="status">
+                    {{ message }}
+                </div>
+            {% endif %}
+
+            {% if db_error %}
+                <div class="alert error" role="alert">
+                    Database connection failed. Check your Supabase
+                    environment variables and database setup.
+
+                    <details>
+                        <summary>Technical details</summary>
+                        <pre>{{ db_error }}</pre>
+                    </details>
+                </div>
+            {% endif %}
+
+            <!-- Add content -->
+            <section class="panel">
+                <h2>
+                    Add {{ kind|replace('_', ' ') }}
+                </h2>
+
+                {% if kind == 'project' %}
+
+                    <!-- Project form -->
+                    <p class="muted">
+                        Add your project details, preview image,
+                        technologies, and project links.
+                    </p>
+
+                    <form
+                        method="post"
+                        action="/admin/items"
+                        class="editor-form"
+                        enctype="multipart/form-data"
+                    >
+                        <input
+                            type="hidden"
+                            name="csrf_token"
+                            value="{{ csrf_token }}"
+                        >
+
+                        <input
+                            type="hidden"
+                            name="item_type"
+                            value="{{ kind }}"
+                        >
+
+                        <label>
+                            Project name
+                            <input
+                                type="text"
+                                name="title"
+                                required
+                                maxlength="200"
+                                placeholder="e.g. 90's Game Hub"
+                            >
+                        </label>
+
+                        <label>
+                            Description
+                            <textarea
+                                name="description"
+                                rows="4"
+                                required
+                                placeholder="Explain what your project does and the problem it solves."
+                            ></textarea>
+                        </label>
+
+                        <div class="form-row">
+                            <label>
+                                Category
+                                <input
+                                    type="text"
+                                    name="category"
+                                    placeholder="Web Development"
+                                >
+                            </label>
+
+                            <label>
+                                Technologies
+                                <input
+                                    type="text"
+                                    name="technologies"
+                                    placeholder="Python, Flask, MongoDB"
+                                >
+                            </label>
+                        </div>
+
+                        
+                        <label>
+                            Project image
+                            <input
+                                type="file"
+                                name="image_file"
+                                accept="image/jpeg,image/png,image/webp,image/gif"
+                                data-image-preview-input
+                            >
+                            <small class="muted">
+                                Optional. Choose a JPEG, PNG, WebP, or GIF image up to 5 MB.
+                            </small>
+                            <img class="project-image-preview" data-image-preview hidden alt="Selected project image preview">
+                            <span class="muted image-preview-empty" data-image-preview-empty>No image selected yet.</span>
+                        </label>
+
+
+                        <label>
+                            Live demo URL
+                            <input
+                                type="url"
+                                name="url"
+                                placeholder="https://your-project.example.com"
+                            >
+                        </label>
+
+                        <label>
+                            GitHub repository URL
+                            <input
+                                type="url"
+                                name="github_url"
+                                placeholder="https://github.com/username/repository"
+                            >
+                        </label>
+
+                        <div class="form-row">
+                            <label>
+                                Sort order
+                                <input
+                                    type="number"
+                                    name="sort_order"
+                                    value="0"
+                                >
+                            </label>
+
+                            <label class="check">
+                                <input
+                                    type="checkbox"
+                                    name="published"
+                                    checked
+                                >
+                                Publish project
+                            </label>
+                        </div>
+
+                        <button class="primary" type="submit">
+                            Add project
+                        </button>
+                    </form>
+
+                {% else %}
+
+                    <!-- JSON form for other content types -->
+                    <p class="muted">
+                        Add the content title and its additional
+                        fields as a JSON object.
+                    </p>
+
+                    <div class="hint">
+                        <b>
+                            Suggested JSON fields for
+                            {{ kind|replace('_', ' ') }}:
+                        </b>
+
+                        {% if kind == 'experience' %}
+                            <code>{"company":"Company name","dates":"Jan 2026 – Present","description":"Responsibilities and achievements"}</code>
+
+                        {% elif kind == 'skill' %}
+                            <code>{"category":"Backend","level":75}</code>
+
+                        {% elif kind == 'education' %}
+                            <code>{"dates":"2022 – 2026","description":"B.Tech Information Technology, CGPA: 7.77"}</code>
+
+                        {% elif kind == 'certification' %}
+                            <code>{"issuer":"Provider","date":"2026","credential_url":"https://example.com"}</code>
+
+                        {% else %}
+                            <code>{"headline":"Full Stack Developer","about":"About paragraph","summary":"Second paragraph","resume_url":"https://example.com"}</code>
+                        {% endif %}
+                    </div>
+
+                    <form
+                        method="post"
+                        action="/admin/items"
+                        class="editor-form"
+                        enctype="multipart/form-data"
+                    >
+                        <input
+                            type="hidden"
+                            name="csrf_token"
+                            value="{{ csrf_token }}"
+                        >
+
+                        <input
+                            type="hidden"
+                            name="item_type"
+                            value="{{ kind }}"
+                        >
+
+                        <label>
+                            Title / name
+                            <input
+                                type="text"
+                                name="title"
+                                required
+                                maxlength="200"
+                            >
+                        </label>
+
+                        <label>
+                            Details (JSON)
+                            <textarea
+                                name="data_json"
+                                rows="6"
+                            >{}</textarea>
+                        </label>
+
+                        <div class="form-row">
+                            <label>
+                                Sort order
+                                <input
+                                    type="number"
+                                    name="sort_order"
+                                    value="0"
+                                >
+                            </label>
+
+                            <label class="check">
+                                <input
+                                    type="checkbox"
+                                    name="published"
+                                    checked
+                                >
+                                Publish content
+                            </label>
+                        </div>
+
+                        <button class="primary" type="submit">
+                            Add content
+                        </button>
+                    </form>
+
+                {% endif %}
+            </section>
+
+            <!-- Existing content -->
+            <section class="panel">
+                <h2>
+                    Existing items
+                    <span class="count">{{ items|length }}</span>
+                </h2>
+
+                {% if not items %}
+                    <p class="muted empty">
+                        No {{ kind|replace('_', ' ') }} entries yet.
+                    </p>
+                {% endif %}
+
+                <div class="item-list">
+                    {% for item in items %}
+                        <details class="item-card">
+                            <summary>
+                                <span>
+                                    <b>{{ item.title }}</b>
+
+                                    <small>
+                                        ID {{ item.id }}
+                                        · Order {{ item.sort_order }}
+                                        ·
+                                        {% if item.published %}
+                                            Published
+                                        {% else %}
+                                            Draft
+                                        {% endif %}
+                                    </small>
+                                </span>
+
+                                <span class="chevron">⌄</span>
+                            </summary>
+
+                            <!-- Edit existing item -->
+                            {% if item.item_type == 'project' %}
+                                {% set project_data = item.data or {} %}
+                                {% set project_technologies = project_data.get('technologies', []) %}
+                                {% if project_technologies is string %}
+                                    {% set project_technologies_text = project_technologies %}
+                                {% else %}
+                                    {% set project_technologies_text = project_technologies|join(', ') %}
+                                {% endif %}
+                                <form
+                                    method="post"
+                                    action="/admin/items/{{ item.id }}/update"
+                                    class="editor-form"
+                                    enctype="multipart/form-data"
+                                >
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                                    <input type="hidden" name="item_type" value="{{ item.item_type }}">
+
+                                    <label>
+                                        Project name
+                                        <input type="text" name="title" value="{{ item.title }}" required maxlength="200">
+                                    </label>
+
+                                    <label>
+                                        Description
+                                        <textarea name="description" rows="4" required>{{ project_data.get('description', '') }}</textarea>
+                                    </label>
+
+                                    <div class="form-row">
+                                        <label>
+                                            Category
+                                            <input type="text" name="category" value="{{ project_data.get('category', 'Web development') }}">
+                                        </label>
+                                        <label>
+                                            Technologies (comma-separated)
+                                            <input type="text" name="technologies" value="{{ project_technologies_text }}">
+                                        </label>
+                                    </div>
+
+                                    <label>
+                                        Current image URL
+                                        <input type="url" name="image" value="{{ project_data.get('image', '') }}" placeholder="Existing Supabase image URL or local path" data-current-image-url>
+                                        <small class="muted">Edit the URL to update the preview, or upload a replacement below.</small>
+                                        <img
+                                            class="project-image-preview"
+                                            data-current-image-preview
+                                            src="{{ project_data.get('image', '') }}"
+                                            alt="Current project image preview"
+                                            {% if not project_data.get('image') %}hidden{% endif %}
+                                        >
+                                        <span class="muted" data-current-image-empty {% if project_data.get('image') %}hidden{% endif %}>No current image URL is set.</span>
+                                    </label>
+
+                                    <label>
+                                        Replace project image (optional)
+                                        <input type="file" name="image_file" accept="image/jpeg,image/png,image/webp,image/gif" data-image-preview-input>
+                                        <small class="muted">JPEG, PNG, WebP, or GIF up to 5 MB.</small>
+                                        <img class="project-image-preview" data-image-preview hidden alt="Selected replacement image preview">
+                                        <span class="muted image-preview-empty" data-image-preview-empty>No replacement selected.</span>
+                                    </label>
+
+                                    <label>
+                                        Live demo URL
+                                        <input type="url" name="url" value="{{ project_data.get('url', '') }}" placeholder="https://your-project.example.com">
+                                    </label>
+
+                                    <label>
+                                        GitHub repository URL
+                                        <input type="url" name="github_url" value="{{ project_data.get('github_url', '') }}" placeholder="https://github.com/username/repository">
+                                    </label>
+
+                                    <div class="form-row">
+                                        <label>
+                                            Sort order
+                                            <input type="number" name="sort_order" value="{{ item.sort_order }}">
+                                        </label>
+                                        <label class="check">
+                                            <input type="checkbox" name="published" {% if item.published %}checked{% endif %}>
+                                            Published (uncheck to unpublish)
+                                        </label>
+                                    </div>
+
+                                    <button class="primary" type="submit">Save project changes</button>
+                                </form>
+                            {% else %}
+                                <form
+                                    method="post"
+                                    action="/admin/items/{{ item.id }}/update"
+                                    class="editor-form"
+                                >
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                                    <input type="hidden" name="item_type" value="{{ item.item_type }}">
+
+                                    <label>
+                                        Title / name
+                                        <input type="text" name="title" value="{{ item.title }}" required maxlength="200">
+                                    </label>
+
+                                    <label>
+                                        Details (JSON)
+                                        <textarea name="data_json" rows="8" required>{{ item.data|tojson(indent=2) }}</textarea>
+                                    </label>
+
+                                    <div class="form-row">
+                                        <label>
+                                            Sort order
+                                            <input type="number" name="sort_order" value="{{ item.sort_order }}">
+                                        </label>
+                                        <label class="check">
+                                            <input type="checkbox" name="published" {% if item.published %}checked{% endif %}>
+                                            Published (uncheck to unpublish)
+                                        </label>
+                                    </div>
+
+                                    <button class="primary" type="submit">Save changes</button>
+                                </form>
+                            {% endif %}
+
+                            <!-- Delete existing item -->
+                            <form
+                                method="post"
+                                action="/admin/items/{{ item.id }}/delete"
+                                onsubmit="return confirm('Delete this item permanently? This action cannot be undone.')"
+                                class="delete-form"
+                            >
+                                <input
+                                    type="hidden"
+                                    name="csrf_token"
+                                    value="{{ csrf_token }}"
+                                >
+
+                                <input
+                                    type="hidden"
+                                    name="item_type"
+                                    value="{{ kind }}"
+                                >
+
+                                <button class="danger" type="submit">
+                                    Delete item
+                                </button>
+                            </form>
+                        </details>
+                    {% endfor %}
+                </div>
+            </section>
+
+            <!-- Footer -->
+            <footer>
+                Portfolio CMS · Keep your environment secrets private.
+            </footer>
+
+        </main>
+    </div>
+
+    <script>
+    (() => {
+        // Preview locally selected image files without uploading them.
+        document.querySelectorAll('[data-image-preview-input]').forEach((input) => {
+            const form = input.closest('form');
+            const preview = form?.querySelector('[data-image-preview]');
+            const empty = form?.querySelector('[data-image-preview-empty]');
+            let previousObjectUrl = null;
+
+            input.addEventListener('change', () => {
+                const file = input.files && input.files[0];
+
+                if (previousObjectUrl) {
+                    URL.revokeObjectURL(previousObjectUrl);
+                    previousObjectUrl = null;
+                }
+
+                if (!file) {
+                    if (preview) {
+                        preview.removeAttribute('src');
+                        preview.hidden = true;
+                    }
+                    if (empty) empty.hidden = false;
+                    return;
+                }
+
+                if (!file.type.startsWith('image/')) {
+                    input.value = '';
+                    if (preview) {
+                        preview.removeAttribute('src');
+                        preview.hidden = true;
+                    }
+                    if (empty) {
+                        empty.textContent = 'Please choose a valid image file.';
+                        empty.hidden = false;
+                    }
+                    return;
+                }
+
+                previousObjectUrl = URL.createObjectURL(file);
+                if (preview) {
+                    preview.src = previousObjectUrl;
+                    preview.hidden = false;
+                }
+                if (empty) empty.hidden = true;
+            });
+
+            form?.addEventListener('submit', () => {
+                // The browser keeps the selected file for the form submission.
+                // The temporary preview URL is released after navigation.
+            });
+        });
+
+        // Keep the existing-image preview in sync when the URL is edited.
+        document.querySelectorAll('[data-current-image-url]').forEach((input) => {
+            const form = input.closest('form');
+            const preview = form?.querySelector('[data-current-image-preview]');
+            const empty = form?.querySelector('[data-current-image-empty]');
+
+            const syncPreview = () => {
+                const value = input.value.trim();
+                if (!preview) return;
+
+                if (!value) {
+                    preview.removeAttribute('src');
+                    preview.hidden = true;
+                    if (empty) empty.hidden = false;
+                    return;
+                }
+
+                preview.onerror = () => {
+                    preview.hidden = true;
+                    if (empty) {
+                        empty.textContent = 'Image preview could not be loaded. Check the URL/path.';
+                        empty.hidden = false;
+                    }
+                };
+                preview.onload = () => {
+                    preview.hidden = false;
+                    if (empty) empty.hidden = true;
+                };
+                preview.src = value;
+                preview.hidden = false;
+                if (empty) {
+                    empty.textContent = 'Loading image preview…';
+                    empty.hidden = false;
+                }
+            };
+
+            input.addEventListener('input', syncPreview);
+            if (preview && input.value.trim()) {
+                preview.onerror = () => {
+                    preview.hidden = true;
+                    if (empty) {
+                        empty.textContent = 'Image preview could not be loaded. Check the URL/path.';
+                        empty.hidden = false;
+                    }
+                };
+                preview.onload = () => {
+                    preview.hidden = false;
+                    if (empty) empty.hidden = true;
+                };
+            }
+        });
+    })();
+    </script>
+
+</body>
+</html>

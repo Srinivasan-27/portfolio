@@ -1,0 +1,9 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Portfolio Admin Login</title><link rel="stylesheet" href="/static/css/admin.css"></head>
+<body class="admin-body"><main class="login-card"><p class="eyebrow">PORTFOLIO CMS</p><h1>Admin login</h1><p class="muted">Sign in to manage your portfolio content.</p>
+{% if error %}<div class="alert error">{{ error }}</div>{% endif %}
+<form method="post" action="/admin/login">
+<input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+<label>Username<input name="username" autocomplete="username" required maxlength="100"></label>
+<label>Password<input type="password" name="password" autocomplete="current-password" required></label>
+<button class="primary" type="submit">Sign in</button></form><a class="back-link" href="/">← Back to portfolio</a></main></body></html>
